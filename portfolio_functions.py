@@ -46,14 +46,14 @@ def stock_volatility(symbols, df_stock_volatility):
     return df_stock_volatility
 
 
-def stock_sharpe_ratio(symbols, df_stock_sharpe_ratio):
+def stock_sharpe_ratio(symbols, time_period, df_stock_sharpe_ratio):
     # Function to calculating Sharpe ratio for 1 stock
     # sharpe ratio = (return - risk free return) / volatility
 
     risk_free_rate = 0.03
 
     for symbol in symbols:
-        df_stock_sharpe_ratio[symbol + '_sharpe_ratio'] = (df_stock_sharpe_ratio[symbol + '_cumulative_gain%'].values[-1] - risk_free_rate) / df_stock_sharpe_ratio[symbol + '_volatility%'].values[-1]
+        df_stock_sharpe_ratio[symbol + '_sharpe_ratio'] = ((df_stock_sharpe_ratio[symbol + '_cumulative_gain%'].values[-1] / time_period) - risk_free_rate) / df_stock_sharpe_ratio[symbol + '_volatility%'].values[-1]
 
     return df_stock_sharpe_ratio
 
@@ -70,15 +70,15 @@ def stock_drawdown(symbols, df_stock_drawdown):
     return df_stock_drawdown
 
 
-def stock_get_perfromance(symbols, df_stock_drawdown):
+def stock_get_perfromance(symbols, time_period, df_stock_drawdown):
     # Function to collect performance data for each stock from raw dataframe
 
-    df_stock_performance = pd.DataFrame({'Total return %': [''], 'Volatility %': [''], 'Max Drawdown %': [''], 'Sharpe ratio': ['']}, index=symbols)
+    df_stock_performance = pd.DataFrame({'Avg Annual Return %': [''], 'Volatility %': [''], 'Max Drawdown %': [''], 'Sharpe Ratio': ['']}, index=symbols)
 
     for symbol in symbols:
-        df_stock_performance.loc[symbol, 'Total return %'] = (df_stock_drawdown[symbol + '_cumulative_gain%'].values[-1] * 100).round(2)
+        df_stock_performance.loc[symbol, 'Avg Annual Return %'] = (df_stock_drawdown[symbol + '_cumulative_gain%'].values[-1] * 100 / time_period).round(2)
         df_stock_performance.loc[symbol, 'Volatility %'] = (df_stock_drawdown[symbol + '_volatility%'].values[-1] * 100).round(2)
         df_stock_performance.loc[symbol, 'Max Drawdown %'] = (df_stock_drawdown[symbol + '_max_drawdown%'].values[-1] * 100).round(2)
-        df_stock_performance.loc[symbol, 'Sharpe ratio'] = (df_stock_drawdown[symbol + '_sharpe_ratio'].values[-1]).round(2)
+        df_stock_performance.loc[symbol, 'Sharpe Ratio'] = (df_stock_drawdown[symbol + '_sharpe_ratio'].values[-1]).round(2)
 
     return df_stock_performance
