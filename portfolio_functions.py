@@ -1,6 +1,6 @@
 # Functions
 
-# import yfinance as yf
+import yfinance as yf
 import pandas as pd
 
 
@@ -9,13 +9,13 @@ def download(symbols, start_date, end_date):
     # Usage: download(['AAPL', 'SPY'], '2020-01-01', '2020-12-31')
 
     # Read data from Yahoo
-    # df = yf.download(symbols, start_date, end_date)
-    # df_close_prices = df[[("Adj Close", s) for s in symbols]]
-    # df_close_prices.columns = df_close_prices.columns.droplevel(level=0)
+    df = yf.download(symbols, start_date, end_date)
+    df_data_download = df[[("Adj Close", s) for s in symbols]]
+    df_data_download.columns = df_data_download.columns.droplevel(level=0)
     # df_close_prices.to_csv('downloaded_data.csv')
 
     # Read data from file
-    df_data_download = pd.read_csv('downloaded_data.csv', index_col=0)
+    # df_data_download = pd.read_csv('downloaded_data.csv', index_col=0)
 
     return df_data_download
 
@@ -73,8 +73,12 @@ def stock_drawdown(symbols, df_stock_drawdown):
 def stock_get_perfromance(symbols, df_stock_drawdown):
     # Function to collect performance data for each stock from raw dataframe
 
-    df_stock_performance = pd.DataFrame()
+    df_stock_performance = pd.DataFrame({'Total return %': [''], 'Volatility %': [''], 'Max Drawdown %': [''], 'Sharpe ratio': ['']}, index=symbols)
+
     for symbol in symbols:
-        df_stock_performance[symbol] = df_stock_drawdown[symbol].values[-1]
+        df_stock_performance.loc[symbol, 'Total return %'] = (df_stock_drawdown[symbol + '_cumulative_gain%'].values[-1] * 100).round(2)
+        df_stock_performance.loc[symbol, 'Volatility %'] = (df_stock_drawdown[symbol + '_volatility%'].values[-1] * 100).round(2)
+        df_stock_performance.loc[symbol, 'Max Drawdown %'] = (df_stock_drawdown[symbol + '_max_drawdown%'].values[-1] * 100).round(2)
+        df_stock_performance.loc[symbol, 'Sharpe ratio'] = (df_stock_drawdown[symbol + '_sharpe_ratio'].values[-1]).round(2)
 
     return df_stock_performance
