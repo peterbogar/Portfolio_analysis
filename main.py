@@ -50,7 +50,7 @@ if __name__ == '__main__':
     # Calculating drawdown for single stocks
     df_stock_drawdown = stock_drawdown(symbols, df_stock_sharpe_ratio)
 
-    # Write results to a file
+    # Write raw results to a file
     # df_stock_drawdown.to_excel('output.xlsx')
 
     # Table output

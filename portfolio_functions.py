@@ -16,7 +16,9 @@ def download(symbols, start_date, end_date):
     df_data_download = df[[("Adj Close", s) for s in symbols]]
     # Remove two level header
     df_data_download.columns = df_data_download.columns.droplevel(level=0)
-    # df_close_prices.to_csv('downloaded_data.csv')
+
+    # Write downloaded data to file
+    # df_data_download.to_csv('downloaded_data.csv')
 
     # Read data from file
     # df_data_download = pd.read_csv('downloaded_data.csv', index_col=0)
