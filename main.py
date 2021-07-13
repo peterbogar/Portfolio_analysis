@@ -1,8 +1,7 @@
 # Main script
 # 1. download daily data for selected stocks
-# 2. calculating performance data if holding one stock from each: corelation, total return, avg annual return, volatility, max drawdown, Sharpe ratio
-# TODO: table output to excel
-# TODO: warning if there is not data for some symbol
+# 2. calculating performance data if holding one stock from each symbol: corelation, total return, avg annual return, volatility, max drawdown, Sharpe ratio
+# TODO: header in excel
 
 import pandas as pd
 import datetime as dt
@@ -24,9 +23,9 @@ pd.set_option('display.max_columns', None)
 initial_account = 10000
 start_date = '2019-03-20'
 end_date = '2021-07-01'
-symbols = ['AAPL', 'FB', 'SPY']
+# symbols = ['AAPL', 'FB', 'SPY']
 dow_jones = ['MMM', 'AXP', 'AMGN', 'AAPL', 'BA', 'CAT', 'CVX', 'CSCO', 'KO', 'DOW', 'GS', 'HD', 'HON', 'IBM', 'INTC', 'JNJ', 'JPM', 'MCD', 'MRK', 'MSFT', 'NKE', 'PG', 'CRM', 'TRV', 'UNH', 'VZ', 'V', 'WBA', 'WMT', 'DIS']
-# symbols = dow_jones
+symbols = dow_jones
 
 
 def stock_perf():
@@ -56,13 +55,18 @@ def stock_perf():
     print()
     print('Stock Correlation:')
     print(tabulate(df_corr, headers='keys', tablefmt='fancy_grid'))
+    writer = pd.ExcelWriter('output.xlsx')
+    df_corr.to_excel(writer, 'Correlation')
+
     print()
     print('Stock performance:')
     print('From date: ', start_date)
     print('To date: ', end_date)
     print(round(time_period, 2), 'years')
-    perf = stock_get_perfromance(symbols, time_period, df_stock_drawdown)
-    print(tabulate(perf, headers='keys', tablefmt='fancy_grid'))
+    df_perf = stock_get_perfromance(symbols, time_period, df_stock_drawdown)
+    print(tabulate(df_perf, headers='keys', tablefmt='fancy_grid'))
+    df_perf.to_excel(writer, 'Performance')
+    writer.save()
 
     # Chart output
     # df_chart = df_stock_drawdown[['AAPL_cumulative_gain%', 'AAPL_drawdown%']]
