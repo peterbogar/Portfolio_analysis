@@ -2,6 +2,27 @@
 
 import yfinance as yf
 import pandas as pd
+import datetime as dt
+
+
+def check_history(symbols, start_date):
+    # Function to check if there is enough history for each symbol
+    hist = True
+
+    for symbol in symbols:
+        # Get latest day for symbol
+        history = yf.Ticker(symbol).history(period="max").index[0]
+        # Convert start_time to datetime format
+        start = dt.datetime.strptime(start_date, '%Y-%m-%d')
+
+        if start < history:
+            hist = False
+            print()
+            print('Insufficient history for', symbol)
+            print('Data since', history, 'only')
+            print('Start date', start)
+
+    return hist
 
 
 def download(symbols, start_date, end_date):
@@ -10,8 +31,8 @@ def download(symbols, start_date, end_date):
     # Output: dataframe with close price for each day
     # Usage: download(list of symbols, '2020-01-01', '2020-12-31')
 
-    # Read data from Yahoo
-    df = yf.download(symbols, start_date, end_date)
+    # Read data from Yahoo, date in STR converted to datetime, one day added to start (downloading starting at start-1?)
+    df = yf.download(symbols, dt.datetime.strptime(start_date, '%Y-%m-%d')+dt.timedelta(days=1), dt.datetime.strptime(end_date, '%Y-%m-%d')+dt.timedelta(days=1))
     # Read only 'Adj price' for each symbol
     df_data_download = df[[("Adj Close", s) for s in symbols]]
     # Remove two level header

@@ -8,6 +8,7 @@ import pandas as pd
 import datetime as dt
 # import matplotlib.pyplot as plt
 from tabulate import tabulate
+from portfolio_functions import check_history
 from portfolio_functions import download
 from portfolio_functions import stock_return
 from portfolio_functions import stock_volatility
@@ -21,19 +22,17 @@ pd.set_option('display.max_columns', None)
 
 # Initial variables
 initial_account = 10000
-start_date = '2019-01-01'
+start_date = '2019-03-20'
 end_date = '2021-07-01'
-symbols = ['AAPL', 'QQQ', 'GLD', 'TLT', 'SPY']
+symbols = ['AAPL', 'FB', 'SPY']
+dow_jones = ['MMM', 'AXP', 'AMGN', 'AAPL', 'BA', 'CAT', 'CVX', 'CSCO', 'KO', 'DOW', 'GS', 'HD', 'HON', 'IBM', 'INTC', 'JNJ', 'JPM', 'MCD', 'MRK', 'MSFT', 'NKE', 'PG', 'CRM', 'TRV', 'UNH', 'VZ', 'V', 'WBA', 'WMT', 'DIS']
+# symbols = dow_jones
 
 
-if __name__ == '__main__':
-
-    # Time period in years to download data
-    time_period = (dt.datetime.strptime(end_date, '%Y-%m-%d') - dt.datetime.strptime(start_date, '%Y-%m-%d')).days / 365
-
+def stock_perf():
     # Downloading data for each stock
     df_data_download = download(symbols, start_date, end_date)
-    print(df_data_download.head())
+    print(df_data_download)
 
     # Calculating correlation among stocks
     df_corr = df_data_download.corr().round(2)
@@ -69,3 +68,13 @@ if __name__ == '__main__':
     # df_chart = df_stock_drawdown[['AAPL_cumulative_gain%', 'AAPL_drawdown%']]
     # df_chart.plot()
     # plt.show()
+
+
+if __name__ == '__main__':
+
+    # Time period in years to download data
+    time_period = (dt.datetime.strptime(end_date, '%Y-%m-%d') - dt.datetime.strptime(start_date, '%Y-%m-%d')).days / 365
+
+    # History check
+    if check_history(symbols, start_date):
+        stock_perf()
